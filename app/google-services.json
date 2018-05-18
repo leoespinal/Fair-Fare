@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "343703873685",
+    "firebase_url": "https://fair-fare-8662f.firebaseio.com",
+    "project_id": "fair-fare-8662f",
+    "storage_bucket": "fair-fare-8662f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:343703873685:android:be774fc1afe5784e",
+        "android_client_info": {
+          "package_name": "com.leoespinal.fairfare"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "343703873685-f09gt31toff1dtnspsq0q0j7unm2fps6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.leoespinal.fairfare",
+            "certificate_hash": "ebc60a879b515ba8a006c492dadb5ffc36efa114"
+          }
+        },
+        {
+          "client_id": "343703873685-u20j8dmkfvci1ppp25ii8fon3kbeb5b3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD6q6nuPnV-hPes2Wme1WH335HRHW4iaVU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "343703873685-u20j8dmkfvci1ppp25ii8fon3kbeb5b3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
