@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">Fair Fare</string>
+    <string name="app_slogan">where you decide your ride.</string>
+    <string name="sign_in">Sign In</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="next">Next</string>
+    <string name="sign_up_form_instructions">Enter your desired display name, email address and password below then click the next button.</string>
+    <string name="email">Email Address</string>
+    <string name="password">Password</string>
+    <string name="display_name">Display Name</string>
+    <string name="link_ride_share_instruction">Link your ride share service accounts below to book rides and get ride fare estimates.</string>
+    <string name="finish">Finish</string>
 </resources>
