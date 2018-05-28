@@ -2,14 +2,12 @@ package com.leoespinal.fairfare;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
@@ -142,7 +140,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             signInExisitingUser(emailTextView.getText().toString(), passwordTextView.getText().toString());
         } else if(viewID == signUpButton.getId()) {
             //Create a new intent to call the sign up form activity
-            Intent intent = new Intent(this, SignUpFormActivity.class);
+            Intent intent = new Intent(this, SignUpActivity.class);
             startActivity(intent);
         } else if(viewID == googleLoginButton.getId()) {
             signInViaGoogle();

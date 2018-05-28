@@ -17,7 +17,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 
-public class SignUpFormActivity extends AppCompatActivity {
+public class SignUpActivity extends AppCompatActivity {
 
     //Firebase instance
     private FirebaseAuth mAuth;
@@ -76,7 +76,7 @@ public class SignUpFormActivity extends AppCompatActivity {
                         } else {
                             //Sign in failed display error message
                             Log.w("createUserAccount", "Failed to create user with email: " + email);
-                            Toast.makeText(SignUpFormActivity.this, "Authentication failed. Error message: " + task.getException(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(SignUpActivity.this, "Authentication failed. Error message: " + task.getException(), Toast.LENGTH_LONG).show();
                             updateUI(null);
                         }
                     }

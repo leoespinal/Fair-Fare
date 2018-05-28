@@ -9,6 +9,11 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        buildConfigField "String", "UBER_CLIENT_ID", "\"${loadSecret("UBER_CLIENT_ID")}\""
+        buildConfigField "String", "UBER_REDIRECT_URI", "\"${loadSecret("UBER_REDIRECT_URI")}\""
+        buildConfigField "String", "LYFT_CLIENT_ID", "\"${loadSecret("LYFT_CLIENT_ID")}\""
+        buildConfigField "String", "LYFT_CLIENT_TOKEN", "\"${loadSecret("LYFT_CLIENT_TOKEN")}\""
+        buildConfigField "String", "LYFT_PACKAGE_NAME", "\"${loadSecret("LYFT_PACKAGE_NAME")}\""
     }
     buildTypes {
         release {
@@ -29,6 +34,17 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:15.1.0'
     implementation 'com.firebaseui:firebase-ui-auth:3.3.1'
     implementation 'com.google.android.gms:play-services-auth:15.0.1'
+    implementation 'com.uber.sdk:rides-android:0.5.3'
+    implementation 'com.lyft:lyft-android-sdk:1.0.3'
 }
 
 apply plugin: 'com.google.gms.google-services'
+
+/*
+*
+* Finds confidential properties from the gradle.properties file
+*
+* */
+def loadSecret(String propertyName) {
+    return hasProperty(propertyName) ? getProperty(propertyName) : "MISSING"
+}
