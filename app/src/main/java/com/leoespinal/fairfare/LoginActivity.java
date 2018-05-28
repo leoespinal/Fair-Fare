@@ -68,10 +68,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     protected void updateUI(FirebaseUser user) {
         if(user != null) {
-            //There is a signed in user
-            Toast.makeText(LoginActivity.this, "Welcome back, " + user.getDisplayName() + "!", Toast.LENGTH_SHORT).show();
-
-            //TODO: Display MapActivity
+//            //There is a signed in user
+//            Toast.makeText(LoginActivity.this, "Welcome back, " + user.getDisplayName() + "!", Toast.LENGTH_SHORT).show();
+//
+//            //TODO: Display MapActivity
+            Intent intent = new Intent(this, MapsActivity.class);
+            startActivity(intent);
 
         } else {
             Log.d("updateUI", "The user is not logged in.");
@@ -119,6 +121,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 Toast.makeText(LoginActivity.this, "Welcome, " + user.getDisplayName() + "!", Toast.LENGTH_LONG).show();
 
+                //TODO: Change this logic below based on weather the user has already linked their uber and lyft accounts yet or not
                 //Open link ride share accounts activity
                 Intent intent = new Intent(this, LinkRideShareAccountsActivity.class);
                 startActivity(intent);

@@ -80,7 +80,9 @@ public class LinkRideShareAccountsActivity extends AppCompatActivity {
         finishButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO: Open MapsActivity
+                Context context = getApplicationContext();
+                Intent mapIntent = new Intent(context, MapsActivity.class);
+                startActivity(mapIntent);
             }
         });
 
