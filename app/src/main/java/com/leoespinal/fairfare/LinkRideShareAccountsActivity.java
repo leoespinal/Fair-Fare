@@ -131,7 +131,8 @@ public class LinkRideShareAccountsActivity extends AppCompatActivity {
 
         @Override
         public void onLoginSuccess(@NonNull AccessToken accessToken) {
-            //TODO: Store access token in local database
+            //Stores access token in shared preferences
+            accessTokenManager.setAccessToken(accessToken);
         }
 
         @Override

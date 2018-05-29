@@ -2,7 +2,6 @@ package com.leoespinal.fairfare;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -16,13 +15,14 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -30,8 +30,10 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.leoespinal.fairfare.models.RideCoordinates;
 
 import java.io.IOException;
 import java.util.List;
@@ -46,6 +48,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     //Coordinate data
     private RideCoordinates rideCoordinates;
+
+    //UI Elements
+    private Button getRideEstimatesButton;
 
 
     public void displayCustomUserToast() {
@@ -75,6 +80,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         //init ride coordinate object
         rideCoordinates = new RideCoordinates();
+
+        //TODO: Disable this button if a destination address has not been selected
+        getRideEstimatesButton = (Button) findViewById(R.id.getRideEstimatesButtonId);
+        getRideEstimatesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(MapsActivity.this, "Getting ride share estimates...", Toast.LENGTH_SHORT).show();
+                //TODO: Issue ride estimates request to both Uber and Lyft Http services
+
+                //TODO: Create an intent to launch RideEstimatesActivity
+            }
+        });
+
 
     }
 
@@ -206,6 +224,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.addMarker(new MarkerOptions().position(rideCoordinates.getStartingCoordinates()).title("Current location"));
         mMap.addMarker(new MarkerOptions().position(userSelectedDestination).title("Destination location"));
 
+        //Create a polyline to show route on map
+        PolylineOptions polylineOptions = new PolylineOptions();
+        polylineOptions.add(rideCoordinates.getStartingCoordinates());
+        polylineOptions.add(rideCoordinates.getDestinationCoordinates());
+        mMap.addPolyline(polylineOptions);
+
         //Set camera bounds to show current location and destination map markers
         LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
         boundsBuilder.include(rideCoordinates.getStartingCoordinates());
@@ -213,7 +237,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLngBounds bounds = boundsBuilder.build();
 
         //Move camera on map
-        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 50), new GoogleMap.CancelableCallback() {
+        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 200), new GoogleMap.CancelableCallback() {
             @Override
             public void onFinish() {
                 Log.i("onPlaceSelected", "Finished setting map camera bounds.");
