@@ -34,6 +34,9 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.leoespinal.fairfare.models.RideCoordinates;
+import com.leoespinal.fairfare.services.LyftRequestService;
+import com.leoespinal.fairfare.services.UberRequestService;
+import com.leoespinal.fairfare.services.UberRestApiService;
 
 import java.io.IOException;
 import java.util.List;
@@ -88,6 +91,31 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onClick(View view) {
                 Toast.makeText(MapsActivity.this, "Getting ride share estimates...", Toast.LENGTH_SHORT).show();
                 //TODO: Issue ride estimates request to both Uber and Lyft Http services
+
+                UberRestApiService uberRestApiService = UberRestApiService.getUniqueInstance();
+                uberRestApiService.setContext(getApplicationContext());
+                uberRestApiService.setRideCoordinates(rideCoordinates);
+
+                try {
+                    uberRestApiService.startBackgroundThread();
+                } catch (Exception e) {
+                    Log.e("MapsActivity", "Failed to connect to Uber REST Api.");
+                }
+
+//                UberRequestService uberRequestService = UberRequestService.getUniqueInstance();
+//                uberRequestService.setContext(getApplicationContext());
+//                uberRequestService.configureAccessTokenAndLoginManager();
+//                uberRequestService.setRideCoordinates(rideCoordinates);
+//
+//                try {
+//                    uberRequestService.getLocalUberServiceOptions();
+//                } catch (Exception e) {
+//                    Log.e("MapsActivity", "Failed to get local ride services from Uber. Error message: " + e.getMessage());
+//                }
+
+
+                LyftRequestService lyftRequestService = LyftRequestService.getUniqueInstance();
+                lyftRequestService.setRideCoordinates(rideCoordinates);
 
                 //TODO: Create an intent to launch RideEstimatesActivity
             }

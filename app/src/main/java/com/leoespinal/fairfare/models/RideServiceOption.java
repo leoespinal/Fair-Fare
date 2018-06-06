@@ -1,6 +1,6 @@
 package com.leoespinal.fairfare.models;
 
-public class RideService {
+public class RideServiceOption {
     private String serviceBaseName;
     private String rideProductName;
     private Integer baseRate;
@@ -12,10 +12,10 @@ public class RideService {
     private Integer eta;
 
     //General constructor
-    public RideService() {}
+    public RideServiceOption() {}
 
     //Uber constructor
-    public RideService(String serviceBaseName, String rideProductName, Integer lowRateEstimate, Integer highRateEstimate, Float surgeMultiplier, String fareId, Integer eta) {
+    public RideServiceOption(String serviceBaseName, String rideProductName, Integer lowRateEstimate, Integer highRateEstimate, Float surgeMultiplier, String fareId, Integer eta) {
         this.serviceBaseName = serviceBaseName;
         this.rideProductName = rideProductName;
         this.lowRateEstimate = lowRateEstimate;
@@ -27,7 +27,7 @@ public class RideService {
 
     //Lyft constructor
     //Note: lowRateEstimate and highRateEstimate is in cents, need to convert to dollars for UI, eta is in seconds -> convert to mins for UI
-    public RideService(String serviceBaseName, String rideProductName, Integer baseRate, Integer lowRateEstimate, Integer highRateEstimate, Integer eta) {
+    public RideServiceOption(String serviceBaseName, String rideProductName, Integer baseRate, Integer lowRateEstimate, Integer highRateEstimate, Integer eta) {
         this.serviceBaseName = serviceBaseName;
         this.rideProductName = rideProductName;
         this.baseRate = baseRate;

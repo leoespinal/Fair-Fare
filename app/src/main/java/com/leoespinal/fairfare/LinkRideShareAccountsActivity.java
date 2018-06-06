@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.leoespinal.fairfare.services.UberRequestService;
 import com.lyft.networking.ApiConfig;
 import com.uber.sdk.android.core.auth.AccessTokenManager;
 import com.uber.sdk.android.core.auth.AuthenticationError;
@@ -27,10 +28,6 @@ import java.util.Arrays;
 
 public class LinkRideShareAccountsActivity extends AppCompatActivity {
 
-    //Uber developer credentials
-    private static final String UBER_CLIENT_ID = BuildConfig.UBER_CLIENT_ID;
-    private static final String UBER_REDIRECT_URI = BuildConfig.UBER_REDIRECT_URI;
-
     //Lyft developer credentials
     private static final String LYFT_CLIENT_ID = BuildConfig.LYFT_CLIENT_ID;
     private static final String LYFT_CLIENT_TOKEN = BuildConfig.LYFT_CLIENT_TOKEN;
@@ -44,19 +41,12 @@ public class LinkRideShareAccountsActivity extends AppCompatActivity {
     private Button connectLyftAccountButton;
     private Button finishButton;
 
-    //Uber SDK
-    private SessionConfiguration uberSessionConfiguration;
-    private LoginManager uberLoginManager;
-    private AccessTokenManager accessTokenManager;
-    private static final int UBER_LOGIN_CUSTOM_REQUEST_CODE = 1120;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_link_ride_share_accounts);
 
-        initUberSdk();
         initLyftSdk();
 
         //Set on click listener for custom button
@@ -64,7 +54,10 @@ public class LinkRideShareAccountsActivity extends AppCompatActivity {
         connectUberAccountButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                uberLoginManager.login(LinkRideShareAccountsActivity.this);
+                UberRequestService uberRequestService = UberRequestService.getUniqueInstance();
+                uberRequestService.setContext(getApplicationContext());
+                uberRequestService.configureAccessTokenAndLoginManager();
+                uberRequestService.getLoginManager().login(LinkRideShareAccountsActivity.this);
             }
         });
 
@@ -96,50 +89,13 @@ public class LinkRideShareAccountsActivity extends AppCompatActivity {
                 .build();
     }
 
-    public void initUberSdk() {
-        //Build the Uber SDK
-        uberSessionConfiguration = new SessionConfiguration.Builder()
-                .setClientId(UBER_CLIENT_ID)
-                .setRedirectUri(UBER_REDIRECT_URI)
-                .setScopes(Arrays.asList(Scope.RIDE_WIDGETS))
-                .build();
-
-        //Create access token storage object
-        accessTokenManager = new AccessTokenManager(this);
-
-        //Configure uber login manager
-        uberLoginManager = new LoginManager(accessTokenManager, new UberLoginCallback(), uberSessionConfiguration, UBER_LOGIN_CUSTOM_REQUEST_CODE);
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        uberLoginManager.onActivityResult(this, requestCode, resultCode, data);
+        UberRequestService.getUniqueInstance().getLoginManager().onActivityResult(this, requestCode, resultCode, data);
     }
 
-    private class UberLoginCallback implements LoginCallback {
-        @Override
-        public void onLoginCancel() {
-
-        }
-
-        @Override
-        public void onLoginError(@NonNull AuthenticationError error) {
-            Toast.makeText(LinkRideShareAccountsActivity.this, "Authentication error. Error message: " + error.name(), Toast.LENGTH_LONG).show();
-            Log.e("UberLoginCallback", error.name());
-        }
-
-        @Override
-        public void onLoginSuccess(@NonNull AccessToken accessToken) {
-            //Stores access token in shared preferences
-            accessTokenManager.setAccessToken(accessToken);
-        }
-
-        @Override
-        public void onAuthorizationCodeReceived(@NonNull String authorizationCode) {
-
-        }
-    }
 
     public void deepLinkIntoLyftApp() {
         if(isLyftInstalled(this, LYFT_PACKAGE_NAME)) {

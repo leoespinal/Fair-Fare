@@ -11,6 +11,7 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "UBER_CLIENT_ID", "\"${loadSecret("UBER_CLIENT_ID")}\""
         buildConfigField "String", "UBER_REDIRECT_URI", "\"${loadSecret("UBER_REDIRECT_URI")}\""
+        buildConfigField "String", "UBER_SERVER_TOKEN", "\"${loadSecret("UBER_SERVER_TOKEN")}\""
         buildConfigField "String", "LYFT_CLIENT_ID", "\"${loadSecret("LYFT_CLIENT_ID")}\""
         buildConfigField "String", "LYFT_CLIENT_TOKEN", "\"${loadSecret("LYFT_CLIENT_TOKEN")}\""
         buildConfigField "String", "LYFT_PACKAGE_NAME", "\"${loadSecret("LYFT_PACKAGE_NAME")}\""

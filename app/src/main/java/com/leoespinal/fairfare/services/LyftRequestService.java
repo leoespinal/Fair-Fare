@@ -44,7 +44,7 @@ public class LyftRequestService {
         return uniqueInstance;
     }
 
-    //TODO: Change this method to return list of RideService objects
+    //TODO: Change this method to return list of RideServiceOption objects
     public List<String> getRideTypes() {
         final List<String> rideOptions = new ArrayList<>();
 
@@ -63,7 +63,7 @@ public class LyftRequestService {
                     List<RideType> rideTypes = rideTypesResponse.ride_types;
 
                     for(RideType rideType: rideTypes) {
-                        //TODO: Get data from ride type to help populate RideService objects
+                        //TODO: Get data from ride type to help populate RideServiceOption objects
                         rideOptions.add(rideType.display_name);
                     }
                 }
