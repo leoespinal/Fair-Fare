@@ -10,6 +10,7 @@ public class RideServiceOption {
     private Float surgeMultiplier;
     private String fareId;
     private Integer eta;
+    private String estimateRange;
 
     //General constructor
     public RideServiceOption() {}
@@ -106,5 +107,13 @@ public class RideServiceOption {
 
     public void setEta(Integer eta) {
         this.eta = eta;
+    }
+
+    public String getEstimateRange() {
+        return estimateRange;
+    }
+
+    public void setEstimateRange(String estimateRange) {
+        this.estimateRange = estimateRange;
     }
 }

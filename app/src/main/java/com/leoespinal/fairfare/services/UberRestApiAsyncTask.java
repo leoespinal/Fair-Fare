@@ -8,19 +8,22 @@ import android.util.Log;
 
 import com.leoespinal.fairfare.BuildConfig;
 import com.leoespinal.fairfare.models.RideCoordinates;
+import com.leoespinal.fairfare.models.RideServiceOption;
 import com.uber.sdk.android.core.auth.AccessTokenManager;
 import com.uber.sdk.core.auth.AccessToken;
 import com.uber.sdk.core.auth.AccessTokenStorage;
+import com.uber.sdk.rides.client.services.RidesService;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
 
-public class UberRestApiService {
-    private static UberRestApiService uniqueInstance = new UberRestApiService();
+public class UberRestApiAsyncTask extends AsyncTask<Void, Void, List<RideServiceOption>> {
     private Context context;
     private String uberProductsEndpoint = "https://api.uber.com/v1.2/products";
     private String uberPriceEstimatesEndpoint = "https://api.uber.com/v1.2/estimates/price";
@@ -28,14 +31,8 @@ public class UberRestApiService {
     private String accessToken;
     private RideCoordinates rideCoordinates;
 
-    private UberRestApiService() {
-//        SharedPreferences sharedPreferences = getContext().getSharedPreferences("uber_user_access_token", Context.MODE_PRIVATE);
-//        accessToken = sharedPreferences.getString("useraccesstoken", "");
-    }
 
-    public static UberRestApiService getUniqueInstance() {
-        return uniqueInstance;
-    }
+    public UberRestApiAsyncTask() {}
 
     public Context getContext() {
         return context;
@@ -45,25 +42,26 @@ public class UberRestApiService {
         this.context = context;
     }
 
-    //Start background thread for request
-    public void startBackgroundThread() throws Exception {
-        AsyncTask.execute(new Runnable() {
-            @Override
-            public void run() {
-                //Networking logic
-                try {
-                    getUberRideEstimates();
-                    //getUberProducts();
-                } catch (Exception e) {
-                    Log.e("EXCEPTION", e.getMessage());
-                }
-
-
-            }
-        });
+    @Override
+    protected List<RideServiceOption> doInBackground(Void... voids) {
+        List<RideServiceOption> rideServiceOptions = new ArrayList<>();
+        try {
+            rideServiceOptions = getUberRideEstimates();
+        } catch (Exception e) {
+            Log.e("UberRestApiAsyncTask", "Failed to fetch Uber ride service options.");
+        }
+        return rideServiceOptions;
     }
 
-    public void getUberProducts() throws Exception {
+    @Override
+    protected void onPostExecute(List<RideServiceOption> rideServiceOptions) {
+        super.onPostExecute(rideServiceOptions);
+
+        //TODO: Pass ride service option list to the recycler view list adapter
+        Log.d("UberRestApiAsyncTask", "Executed getUberRideEstimates().");
+    }
+
+    private void getUberProducts() throws Exception {
         //Create URL to get all uber products
         String uberProductsUrl = uberProductsEndpoint.concat("?latitude=" + (float) rideCoordinates.getStartingCoordinates().latitude + "&longitude=" + (float) rideCoordinates.getStartingCoordinates().longitude);
         URL uberProductsEndpoint = new URL(uberProductsUrl);
@@ -90,7 +88,8 @@ public class UberRestApiService {
     }
 
 
-    public void getUberRideEstimates() throws Exception {
+    private List<RideServiceOption> getUberRideEstimates() throws Exception {
+        List<RideServiceOption> rideServiceOptions = new ArrayList<>();
         //Create URL to get uber price estimates for destination
         String uberPriceEstimatesUrl = uberPriceEstimatesEndpoint.concat("?start_latitude=" + (float) rideCoordinates.getStartingCoordinates().latitude + "&start_longitude=" + (float) rideCoordinates.getStartingCoordinates().longitude + "&end_latitude=" + (float) rideCoordinates.getDestinationCoordinates().latitude + "&end_longitude=" + (float) rideCoordinates.getDestinationCoordinates().longitude);
 
@@ -117,10 +116,10 @@ public class UberRestApiService {
             jsonReader.beginObject(); //start processing
             while (jsonReader.hasNext()) { //loop through all keys
                 String name = jsonReader.nextName();
-                Log.i("UberRestApiService", "Name: " + name);
+                Log.i("UberRestApiAsyncTask", "Name: " + name);
                 jsonReader.beginArray();
                 while (jsonReader.hasNext()) {
-                    parsePrice(jsonReader);
+                    rideServiceOptions.add(parsePrice(jsonReader));
                 }
                 jsonReader.endArray();
             }
@@ -135,9 +134,10 @@ public class UberRestApiService {
         } else {
             Log.e("UberHttpService", "Error occurred getting uber price estimates data. Response code: " + Integer.toString(connection.getResponseCode()) + " Response message: " + connection.getResponseMessage() + " Fields: " + connection.getHeaderFields());
         }
+        return rideServiceOptions;
     }
 
-    public void parsePrice(JsonReader reader) throws Exception {
+    private RideServiceOption parsePrice(JsonReader reader) throws Exception {
         String productName = null;
         String estimate = null;
         Integer duration = null;
@@ -157,8 +157,13 @@ public class UberRestApiService {
         }
         reader.endObject();
 
-        Log.i("UberRestApiService", "Uber product: " + productName + " estimate: " + estimate + " duration: " + duration);
+        RideServiceOption ridesService = new RideServiceOption();
+        ridesService.setServiceBaseName("Uber " + productName);
+        ridesService.setEstimateRange(estimate);
+        ridesService.setEta(duration);
 
+        Log.i("UberRestApiAsyncTask", "Uber product: " + productName + " estimate: " + estimate + " duration in minutes: " + duration/60);
+        return ridesService;
     }
 
     public RideCoordinates getRideCoordinates() {

@@ -35,8 +35,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.leoespinal.fairfare.models.RideCoordinates;
 import com.leoespinal.fairfare.services.LyftRequestService;
-import com.leoespinal.fairfare.services.UberRequestService;
-import com.leoespinal.fairfare.services.UberRestApiService;
+import com.leoespinal.fairfare.services.UberRestApiAsyncTask;
 
 import java.io.IOException;
 import java.util.List;
@@ -92,15 +91,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Toast.makeText(MapsActivity.this, "Getting ride share estimates...", Toast.LENGTH_SHORT).show();
                 //TODO: Issue ride estimates request to both Uber and Lyft Http services
 
-                UberRestApiService uberRestApiService = UberRestApiService.getUniqueInstance();
-                uberRestApiService.setContext(getApplicationContext());
-                uberRestApiService.setRideCoordinates(rideCoordinates);
+                UberRestApiAsyncTask uberRestApiAsyncTask = new UberRestApiAsyncTask();
+                uberRestApiAsyncTask.setContext(getApplicationContext());
+                uberRestApiAsyncTask.setRideCoordinates(rideCoordinates);
+                uberRestApiAsyncTask.execute();
 
-                try {
-                    uberRestApiService.startBackgroundThread();
-                } catch (Exception e) {
-                    Log.e("MapsActivity", "Failed to connect to Uber REST Api.");
-                }
+                //Old working code
+//                try {
+//                    uberRestApiAsyncTask.startBackgroundThread();
+//                } catch (Exception e) {
+//                    Log.e("MapsActivity", "Failed to connect to Uber REST Api.");
+//                }
 
 //                UberRequestService uberRequestService = UberRequestService.getUniqueInstance();
 //                uberRequestService.setContext(getApplicationContext());
@@ -221,7 +222,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 //update the location on the map as soon as the map loads
                 Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                LatLng usersCurrentLocation = new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
+
+                LatLng usersCurrentLocation = null;
+                if(lastKnownLocation != null) {
+                    usersCurrentLocation = new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
+                }
+
 
                 //Current location as starting coordinates for ride
                 rideCoordinates.setStartingCoordinates(usersCurrentLocation);
