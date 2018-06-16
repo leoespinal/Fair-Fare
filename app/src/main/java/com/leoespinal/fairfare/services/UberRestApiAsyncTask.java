@@ -1,12 +1,14 @@
 package com.leoespinal.fairfare.services;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.util.JsonReader;
 import android.util.Log;
 
 import com.leoespinal.fairfare.BuildConfig;
+import com.leoespinal.fairfare.RideEstimatesActivity;
 import com.leoespinal.fairfare.models.RideCoordinates;
 import com.leoespinal.fairfare.models.RideServiceOption;
 import com.uber.sdk.android.core.auth.AccessTokenManager;
@@ -30,6 +32,7 @@ public class UberRestApiAsyncTask extends AsyncTask<Void, Void, List<RideService
     private static final String UBER_SERVER_TOKEN = BuildConfig.UBER_SERVER_TOKEN;
     private String accessToken;
     private RideCoordinates rideCoordinates;
+    private List<RideServiceOption> rideServiceOptions;
 
 
     public UberRestApiAsyncTask() {}
@@ -56,9 +59,14 @@ public class UberRestApiAsyncTask extends AsyncTask<Void, Void, List<RideService
     @Override
     protected void onPostExecute(List<RideServiceOption> rideServiceOptions) {
         super.onPostExecute(rideServiceOptions);
-
-        //TODO: Pass ride service option list to the recycler view list adapter
+        RideOptionsService rideOptionsService = RideOptionsService.getUniqueInstance();
+        rideOptionsService.setRideServiceOptionList(rideServiceOptions);
         Log.d("UberRestApiAsyncTask", "Executed getUberRideEstimates().");
+
+        //Create intent to start RideEstimatesActivity
+        Intent rideEstimatesViewIntent = new Intent(getContext(), RideEstimatesActivity.class);
+        rideEstimatesViewIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(rideEstimatesViewIntent);
     }
 
     private void getUberProducts() throws Exception {
@@ -89,7 +97,7 @@ public class UberRestApiAsyncTask extends AsyncTask<Void, Void, List<RideService
 
 
     private List<RideServiceOption> getUberRideEstimates() throws Exception {
-        List<RideServiceOption> rideServiceOptions = new ArrayList<>();
+        rideServiceOptions = new ArrayList<>();
         //Create URL to get uber price estimates for destination
         String uberPriceEstimatesUrl = uberPriceEstimatesEndpoint.concat("?start_latitude=" + (float) rideCoordinates.getStartingCoordinates().latitude + "&start_longitude=" + (float) rideCoordinates.getStartingCoordinates().longitude + "&end_latitude=" + (float) rideCoordinates.getDestinationCoordinates().latitude + "&end_longitude=" + (float) rideCoordinates.getDestinationCoordinates().longitude);
 
@@ -158,11 +166,12 @@ public class UberRestApiAsyncTask extends AsyncTask<Void, Void, List<RideService
         reader.endObject();
 
         RideServiceOption ridesService = new RideServiceOption();
-        ridesService.setServiceBaseName("Uber " + productName);
+        ridesService.setServiceBaseName(productName);
         ridesService.setEstimateRange(estimate);
-        ridesService.setEta(duration);
+        int durationInMins = duration/60;
+        ridesService.setEta(durationInMins);
 
-        Log.i("UberRestApiAsyncTask", "Uber product: " + productName + " estimate: " + estimate + " duration in minutes: " + duration/60);
+        Log.i("UberRestApiAsyncTask", "Uber product: " + productName + " estimate: " + estimate + " duration in minutes: " + durationInMins);
         return ridesService;
     }
 
@@ -172,5 +181,13 @@ public class UberRestApiAsyncTask extends AsyncTask<Void, Void, List<RideService
 
     public void setRideCoordinates(RideCoordinates rideCoordinates) {
         this.rideCoordinates = rideCoordinates;
+    }
+
+    public List<RideServiceOption> getRideServiceOptions() {
+        return rideServiceOptions;
+    }
+
+    public void setRideServiceOptions(List<RideServiceOption> rideServiceOptions) {
+        this.rideServiceOptions = rideServiceOptions;
     }
 }

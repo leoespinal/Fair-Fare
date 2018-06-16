@@ -2,18 +2,21 @@ package com.leoespinal.fairfare;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -34,7 +37,9 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.leoespinal.fairfare.models.RideCoordinates;
+import com.leoespinal.fairfare.models.RideServiceOption;
 import com.leoespinal.fairfare.services.LyftRequestService;
+import com.leoespinal.fairfare.services.RideOptionsService;
 import com.leoespinal.fairfare.services.UberRestApiAsyncTask;
 
 import java.io.IOException;
@@ -83,7 +88,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //init ride coordinate object
         rideCoordinates = new RideCoordinates();
 
-        //TODO: Disable this button if a destination address has not been selected
         getRideEstimatesButton = (Button) findViewById(R.id.getRideEstimatesButtonId);
         getRideEstimatesButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -117,8 +121,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 LyftRequestService lyftRequestService = LyftRequestService.getUniqueInstance();
                 lyftRequestService.setRideCoordinates(rideCoordinates);
-
-                //TODO: Create an intent to launch RideEstimatesActivity
             }
         });
 
@@ -223,7 +225,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 //update the location on the map as soon as the map loads
                 Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
-                LatLng usersCurrentLocation = null;
+                LatLng usersCurrentLocation = usersCurrentLocation = new LatLng(42.723640, -71.178160);;
                 if(lastKnownLocation != null) {
                     usersCurrentLocation = new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
                 }
@@ -231,7 +233,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 //Current location as starting coordinates for ride
                 rideCoordinates.setStartingCoordinates(usersCurrentLocation);
-
                 mMap.clear(); // remove any old markers
                 mMap.addMarker(new MarkerOptions().position(usersCurrentLocation).title("Current location"));
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(usersCurrentLocation, 15));
