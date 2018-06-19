@@ -94,34 +94,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onClick(View view) {
                 Toast.makeText(MapsActivity.this, "Getting ride share estimates...", Toast.LENGTH_SHORT).show();
-                //TODO: Issue ride estimates request to both Uber and Lyft Http services
 
                 UberRestApiAsyncTask uberRestApiAsyncTask = new UberRestApiAsyncTask();
                 uberRestApiAsyncTask.setContext(getApplicationContext());
                 uberRestApiAsyncTask.setRideCoordinates(rideCoordinates);
                 uberRestApiAsyncTask.execute();
 
-                //Old working code
-//                try {
-//                    uberRestApiAsyncTask.startBackgroundThread();
-//                } catch (Exception e) {
-//                    Log.e("MapsActivity", "Failed to connect to Uber REST Api.");
-//                }
-
-//                UberRequestService uberRequestService = UberRequestService.getUniqueInstance();
-//                uberRequestService.setContext(getApplicationContext());
-//                uberRequestService.configureAccessTokenAndLoginManager();
-//                uberRequestService.setRideCoordinates(rideCoordinates);
-//
-//                try {
-//                    uberRequestService.getLocalUberServiceOptions();
-//                } catch (Exception e) {
-//                    Log.e("MapsActivity", "Failed to get local ride services from Uber. Error message: " + e.getMessage());
-//                }
-
-
-//                LyftRequestService lyftRequestService = LyftRequestService.getUniqueInstance();
-//                lyftRequestService.setRideCoordinates(rideCoordinates);
                 LyftRestApiAsyncTask lyftRestApiAsyncTask = new LyftRestApiAsyncTask();
                 lyftRestApiAsyncTask.setContext(getApplicationContext());
                 lyftRestApiAsyncTask.setRideCoordinates(rideCoordinates);
