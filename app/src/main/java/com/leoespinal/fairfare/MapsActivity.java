@@ -39,6 +39,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.leoespinal.fairfare.models.RideCoordinates;
 import com.leoespinal.fairfare.models.RideServiceOption;
 import com.leoespinal.fairfare.services.LyftRequestService;
+import com.leoespinal.fairfare.services.LyftRestApiAsyncTask;
 import com.leoespinal.fairfare.services.RideOptionsService;
 import com.leoespinal.fairfare.services.UberRestApiAsyncTask;
 
@@ -119,8 +120,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //                }
 
 
-                LyftRequestService lyftRequestService = LyftRequestService.getUniqueInstance();
-                lyftRequestService.setRideCoordinates(rideCoordinates);
+//                LyftRequestService lyftRequestService = LyftRequestService.getUniqueInstance();
+//                lyftRequestService.setRideCoordinates(rideCoordinates);
+                LyftRestApiAsyncTask lyftRestApiAsyncTask = new LyftRestApiAsyncTask();
+                lyftRestApiAsyncTask.setContext(getApplicationContext());
+                lyftRestApiAsyncTask.setRideCoordinates(rideCoordinates);
+                lyftRestApiAsyncTask.execute();
             }
         });
 

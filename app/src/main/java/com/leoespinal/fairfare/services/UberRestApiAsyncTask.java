@@ -60,13 +60,13 @@ public class UberRestApiAsyncTask extends AsyncTask<Void, Void, List<RideService
     protected void onPostExecute(List<RideServiceOption> rideServiceOptions) {
         super.onPostExecute(rideServiceOptions);
         RideOptionsService rideOptionsService = RideOptionsService.getUniqueInstance();
-        rideOptionsService.setRideServiceOptionList(rideServiceOptions);
-        Log.d("UberRestApiAsyncTask", "Executed getUberRideEstimates().");
+        //rideOptionsService.setRideServiceOptionList(rideServiceOptions);
 
-        //Create intent to start RideEstimatesActivity
-        Intent rideEstimatesViewIntent = new Intent(getContext(), RideEstimatesActivity.class);
-        rideEstimatesViewIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(rideEstimatesViewIntent);
+        for(RideServiceOption rideServiceOption: rideServiceOptions) {
+            rideOptionsService.add(rideServiceOption);
+        }
+
+        Log.d("UberRestApiAsyncTask", "Executed getUberRideEstimates().");
     }
 
     private void getUberProducts() throws Exception {

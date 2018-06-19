@@ -65,7 +65,7 @@ public class LinkRideShareAccountsActivity extends AppCompatActivity {
         connectLyftAccountButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                deepLinkIntoLyftApp();
+                Toast.makeText(LinkRideShareAccountsActivity.this, "Authenticating Lyft.", Toast.LENGTH_LONG).show();
             }
         });
 
