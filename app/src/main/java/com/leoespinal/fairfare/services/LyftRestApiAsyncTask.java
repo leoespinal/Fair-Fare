@@ -180,13 +180,10 @@ public class LyftRestApiAsyncTask extends AsyncTask<Void, Void, List<RideService
     }
 
     private RideServiceOption parseRideEstimate(JsonReader jsonReader) throws Exception {
-        RideServiceOption rideServiceOption = new RideServiceOption();
-
-        String productName = null;
-        Integer estimateLow = null;
-        Integer estimateHigh = null;
-        String estimateRange = null;
-        Integer duration = null;
+        String productName = "";
+        Integer estimateLow = 0;
+        Integer estimateHigh = 0;
+        Integer duration = 0;
 
         jsonReader.beginObject();
         while (jsonReader.hasNext()) {
@@ -195,10 +192,12 @@ public class LyftRestApiAsyncTask extends AsyncTask<Void, Void, List<RideService
                 productName = jsonReader.nextString();
             } else if (name.equals("estimated_cost_cents_max")) {
                 //Get estimate in dollars
-                estimateHigh = Math.floorDiv(jsonReader.nextInt(), 100);
+                Double estimateHi = Math.floor(jsonReader.nextInt()/100);
+                estimateHigh = estimateHi.intValue();
             } else if (name.equals("estimated_cost_cents_min")) {
                 //Get estimate in dollars
-                estimateLow = Math.floorDiv(jsonReader.nextInt(), 100);
+                Double estimateLo = Math.floor(jsonReader.nextInt()/100);
+                estimateLow = estimateLo.intValue();
             } else if (name.equals("estimated_duration_seconds")) {
                 duration = jsonReader.nextInt();
             } else {
@@ -208,7 +207,7 @@ public class LyftRestApiAsyncTask extends AsyncTask<Void, Void, List<RideService
         jsonReader.endObject();
 
         RideServiceOption ridesService = new RideServiceOption();
-        estimateRange = "$" + estimateLow + "-" + estimateHigh;
+        String estimateRange = "$" + estimateLow + "-" + estimateHigh;
         ridesService.setServiceBaseName(productName);
         ridesService.setEstimateRange(estimateRange);
         int durationInMins = duration/60;
@@ -216,6 +215,6 @@ public class LyftRestApiAsyncTask extends AsyncTask<Void, Void, List<RideService
 
         Log.i("LyftRestApiAsyncTask", "Lyft product: " + productName + " estimate: " + estimateRange + " duration in minutes: " + durationInMins);
 
-        return rideServiceOption;
+        return ridesService;
     }
 }
